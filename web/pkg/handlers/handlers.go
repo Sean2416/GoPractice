@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"myapp/pkg/renders"
 	"net/http"
 )
@@ -12,14 +11,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func About(w http.ResponseWriter, r *http.Request) {
-	n, err := AddValues(1, 2)
-
-	if err != nil {
-		_, _ = fmt.Fprintf(w, fmt.Sprintf("err in : %s", err))
-		return
-	}
-
-	_, _ = fmt.Fprintf(w, " The value is %d", n)
+	renders.RenderTemplate(w, "about.page.tmpl")
 }
 
 func AddValues(x, y int) (int, error) {
