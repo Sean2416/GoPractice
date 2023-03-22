@@ -1,0 +1,204 @@
+definitions:
+  api.AddUserRequest:
+    properties:
+      age:
+        description: 年齡
+        type: integer
+      brother_list:
+        description: 兄弟列表v1
+        items:
+          type: string
+        type: array
+      name:
+        description: 姓名
+        type: string
+    type: object
+  api.UserResponseData:
+    properties:
+      account_status:
+        description: 帳號類型
+        type: integer
+      age:
+        type: integer
+      brother_list:
+        items:
+          type: string
+        type: array
+      cname:
+        type: string
+      is_kids:
+        type: boolean
+      last_updated:
+        $ref: '#/definitions/timestamppb.Timestamp'
+        description: 一種可以參考時間方式, 也能直接int64 or string
+      name:
+        description: 姓名
+        type: string
+      relation_map:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  controller_model.CreateReferralUrlReq:
+    properties:
+      url:
+        example: url
+        type: string
+    required:
+    - url
+    type: object
+  controller_model.GetConsultantResp:
+    properties:
+      basicCname:
+        type: string
+      basicFname:
+        type: string
+      basicLname:
+        type: string
+      conName:
+        type: string
+      conSn:
+        type: integer
+      location:
+        type: string
+      nationality:
+        type: string
+      status:
+        type: string
+      workFor:
+        type: string
+    type: object
+  timestamppb.Timestamp:
+    properties:
+      nanos:
+        description: |-
+          Non-negative fractions of a second at nanosecond resolution. Negative
+          second values with fractions must still have non-negative nanos values
+          that count forward in time. Must be from 0 to 999,999,999
+          inclusive.
+        type: integer
+      seconds:
+        description: |-
+          Represents seconds of UTC time since Unix epoch
+          1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
+          9999-12-31T23:59:59Z inclusive.
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/callApiAndLog:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: callApiAndLog
+      tags:
+      - Demo
+  /v1/consultant:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - default: "1234"
+        description: token
+        in: header
+        name: Token
+        type: string
+      - description: body
+        in: body
+        name: sendBody
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.UserResponseData'
+      summary: 新增顧問
+      tags:
+      - Consultant
+  /v1/consultant/{conSn}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: "2913"
+        description: 顧問Sn
+        in: path
+        name: conSN
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller_model.GetConsultantResp'
+      summary: 取得顧問資料
+      tags:
+      - Consultant
+  /v1/demoContext:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: for FromContext
+      tags:
+      - Demo
+  /v1/democontextA:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: democontextAcallB
+      tags:
+      - Demo
+  /v1/memberInfo:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: for db log
+      tags:
+      - Demo
+  /v1/referral/{conSn}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - default: 119691
+        description: 顧問Sn
+        in: path
+        name: conSn
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: sendBody
+        required: true
+        schema:
+          $ref: '#/definitions/controller_model.CreateReferralUrlReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: 創建老師專屬URL
+      tags:
+      - Consultant
+swagger: "2.0"

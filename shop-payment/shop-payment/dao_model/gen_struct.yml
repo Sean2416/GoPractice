@@ -1,0 +1,18 @@
+#reverse -f gen_struct.yml
+
+kind: reverse
+name: mydb
+source:
+  database: mysql
+  conn_str: 'user_godemo:Abc123@tcp(172.16.85.77:3306)/godemo?charset=utf8'
+targets:
+- type: codes
+#  include_tables: # tables included, you can use **
+#    - session_info
+  exclude_tables:
+    - member_info
+  language: golang
+  column_name: true
+  multiple_files: true # generate multiple files or one
+  template_path: ./goxorm.tmpl
+  output_dir: ./

@@ -1,0 +1,16 @@
+[HelloPerson]
+description = "你是誰"
+other = "你好 {{.Name}}"
+
+[MyUnreadEmails]
+description = "我的未讀郵件數量"
+other = "我有 {{.PluralCount}} 未讀的郵件"
+
+[PersonUnreadEmails]
+description = "一個人有未讀的數量"
+one = "{{.Name}} 有 {{.UnreadEmailCount}} 未讀"
+other = "{{.Name}} has {{.UnreadEmailCount}} 未讀"
+
+[lobbyName]
+description = "大會堂名稱"
+other = "Lobby Session55"

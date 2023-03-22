@@ -1,0 +1,66 @@
+package dao_model
+
+{{$ilen := len .Imports}}
+{{if gt $ilen 0}}
+import (
+  {{range .Imports}}"{{.}}"{{end}}
+)
+{{end}}
+
+{{range .Tables}}
+type {{TableMapper .Name}} struct {
+{{$table := .}}
+{{range .ColumnsSeq}}{{$col := $table.GetColumn .}}{{if $col.Nullable}}{{ColumnMapper $col.Name}}	*{{Type $col}} `{{Tag $table $col}}`{{end}}{{if not $col.Nullable}}{{ColumnMapper $col.Name}}	{{Type $col}} `{{Tag $table $col}}`{{end}}
+{{end}}
+}
+
+func (m *{{TableMapper .Name}}) TableName() string {
+    return "{{$table.Name}}"
+}
+
+{{$current_table := TableMapper .Name}}
+
+
+/*
+// FindEasyToSQL : simple query
+func (m *{{$current_table}}) FindEasyToSQL(cond *{{$current_table}}Cond, columns ...string) (sql string, args []interface{}, err error) {
+    return GenSql(m.TableName(), columns, cond, []string{}, nil, nil, []string{})
+}
+
+// FindToSQL : complex query
+func (m *{{$current_table}}) FindToSQL(cond *{{$current_table}}Cond, page *Page, order map[string]string, groups []string, columns ...string) (sql string, args []interface{}, err error) {
+	return GenSql(m.TableName(), columns, cond, []string{}, page, order, groups)
+}
+*/
+
+{{range .ColumnsSeq}}
+{{$col := $table.GetColumn .}}{{if $col.Nullable}}var {{$current_table}}_{{ColumnMapper $col.Name}}_DEFAULT {{Type $col}}{{end}}{{end}}
+
+{{range .ColumnsSeq}}
+
+{{$col := $table.GetColumn .}}
+{{if $col.Nullable}}
+func (m *{{$current_table}}) IsSet{{ColumnMapper $col.Name}}() bool {
+    return m.{{ColumnMapper $col.Name}} != nil
+}
+
+func (m *{{$current_table}}) Get{{ColumnMapper $col.Name}}() {{Type $col}} {
+    if !m.IsSet{{ColumnMapper $col.Name}}() {
+        return {{$current_table}}_{{ColumnMapper $col.Name}}_DEFAULT
+    }
+    return *m.{{ColumnMapper $col.Name}}
+}
+{{end}}
+
+{{if not $col.Nullable}}
+func (m *{{$current_table}}) IsSet{{ColumnMapper $col.Name}}() bool {
+    return true
+}
+
+func (m *{{$current_table}}) Get{{ColumnMapper $col.Name}}() {{Type $col}} {
+    return m.{{ColumnMapper $col.Name}}
+}
+{{end}}
+
+{{end}}
+{{end}}

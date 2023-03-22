@@ -1,0 +1,13 @@
+version: '3'
+services:
+  shop-payment:
+    build: .
+    image: shop-payment
+    container_name: shop-payment
+    restart: always
+    ports:
+      - "8088:8000"
+    environment:
+      - ENV_TAG=stage
+#    volumes:
+#      - /tmp/aaa:/app/output/log
