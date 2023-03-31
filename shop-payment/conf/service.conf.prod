@@ -1,9 +1,13 @@
 [server]
-runMode = "release"
-httpPort = 8000
-readTimeout = "3s"
-writeTimeout = "3s"
+run_mode = "release"
+http_port = 8000
+read_timeout = "3s"
+write_timeout = "3s"
 gin_file = "./log/gin.log"
+
+[middleware]
+file_path = "./log/api.log"
+#skip_resp_body_with_paths = ["/v1/callA"]
 
 [log]
 file_path = "./log/all.log"
@@ -14,17 +18,17 @@ max_backups = 5
 # "text" or "json"
 formatter = "text"
 show_file_line = true
+debug = false
 
 [database]
 type = "mysql"
-user = "user_GTalk"
-password = "PTA6SOuRfLM#"
-host = "db1-v.tmd.tutorabc.com"
-name = "GTalk"
-idleConns = 10
-openConns = 100
+user = "user_godemo"
+password = "Abc123"
+host = "172.16.85.77:3306"
+schema = "godemo"
+idle_conns = 10
+open_conns = 100
 file_path = "./log/db.log"
-
 
 [apiconf]
     [apiconf.rda]
@@ -40,20 +44,15 @@ file_path = "./log/db.log"
         base_url = "http://127.0.0.1:8001"
         timeout = "2s"
 
-
 [cachecloud]
 appid = 113
 
 [redis]
 #redis://
-url = "redis://172.16.81.73:6409"
+#url = "redis://ip:port"
 #password = ""
 #max_idle =      #最大空闲连接数，默认是 DefaultMaxIdle。
 #max_active =    #最大活跃连接数，默认是 DefaultMaxActive。
 #idle_timeout =  #如果连接空闲，自动断开的时间，默认是 DefaultIdleTimeout。
 #conn_timeout =  #连接超时时间，默认是 DefaultConnTimeout。
 #send_timeout =  #发送数据超时时间，默认是 DefaultSendTimeout。
-
-
-[sms]
-appsn = "2c6cfb3f1805c00b3a09abd503850564"
