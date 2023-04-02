@@ -1,23 +1,59 @@
 package handlers
 
 import (
-	"errors"
-	"myapp/pkg/renders"
+	"WEB/pkg/config"
+	"WEB/pkg/models"
+	"WEB/pkg/render"
+	"fmt"
 	"net/http"
 )
 
-func Home(w http.ResponseWriter, r *http.Request) {
-	renders.RenderTemplate(w, "home.page.tmpl")
+// Repo the repository used by the handlers
+var Repo *Repository
+
+// Repository is the repository type
+type Repository struct {
+	App *config.AppConfig
 }
 
-func About(w http.ResponseWriter, r *http.Request) {
-	renders.RenderTemplate(w, "about.page.tmpl")
+// NewRepo creates a new repository
+func NewRepo(a *config.AppConfig) *Repository {
+	return &Repository{
+		App: a,
+	}
 }
 
-func AddValues(x, y int) (int, error) {
-	if x < y {
-		return 0, errors.New("Some thing is wrong! ")
+// NewHandlers sets the repository for the handlers
+func NewHandlers(r *Repository) {
+	Repo = r
+}
+
+// Home is the handler for the home page
+func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	remoteIP := r.RemoteAddr
+
+	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
+
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
+}
+
+// About is the handler for the about page
+func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
+
+	//透過邏輯取得回傳內容，組成資料後傳遞到前端處理
+	dm := make(map[string]interface{})
+	dm["product"] = map[string]interface{}{
+		"name":   "IPhone XR",
+		"amount": 1000,
 	}
 
-	return (x + y), nil
+	sm := make(map[string]string)
+	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
+	fmt.Println(remoteIP)
+
+	// send data to the template
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
+		Data:      dm,
+		StringMap: sm,
+	})
 }
