@@ -1,10 +1,11 @@
 package main
 
 import (
-	"WEB/pkg/config"
-	"WEB/pkg/handlers"
-	"WEB/pkg/render"
-	"WEB/routers"
+	"WEB/internal/config"
+	"WEB/internal/handlers"
+	"WEB/internal/models"
+	"WEB/internal/render"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,16 +21,19 @@ var session *scs.SessionManager
 
 // main is the main function
 func main() {
+	gob.Register(models.Reservation{})
 
-	app.IsProduction = false
+	// change this to true when in production
+	app.InProduction = false
 
-	ss := scs.New()
-	ss.Lifetime = 60 * time.Minute
-	//關閉瀏覽器後，Session是否保留
-	ss.Cookie.Persist = true
-	ss.Cookie.SameSite = http.SameSiteLaxMode
-	//是否啟用https(正是區需要啟用)
-	ss.Cookie.Secure = app.IsProduction
+	// set up the session
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
@@ -38,18 +42,21 @@ func main() {
 
 	app.TemplateCache = tc
 	app.UseCache = false
-	app.Session = session
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandlers(repo)
+
 	render.NewTemplates(&app)
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
 
 	srv := &http.Server{
 		Addr:    portNumber,
-		Handler: routers.Routes(&app),
+		Handler: routes(&app),
 	}
 
 	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
