@@ -1,0 +1,41 @@
+{{template "base" .}}
+
+{{define "content"}}
+    {{$res := index .Data "payment"}}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-5">This is the Payment page</h1>
+                <hr>
+
+                <table class="table table-striped">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td> 訂單編號: </td>
+                            <td> {{$res.OrderNo}} </td>
+                        </tr>
+                        <tr>
+                            <td> 客戶姓名: </td>
+                            <td> {{$res.CustomerName}} </td>
+                        </tr>
+                        <tr>
+                            <td> 客戶電話: </td>
+                            <td> {{$res.Phone}} </td>
+                        </tr>
+                        <tr>
+                            <td> 商品名稱: </td>
+                            <td> {{$res.Desc}} </td>
+                        </tr>
+                        <tr>
+                            <td> 價格: </td>
+                            <td> {{$res.Amount}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+{{end}}

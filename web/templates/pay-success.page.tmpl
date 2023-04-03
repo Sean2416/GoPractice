@@ -1,0 +1,26 @@
+{{template "base" .}}
+
+{{define "content"}}
+    {{$res := index .Data "payment"}}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>恭喜你付款成功</h1>
+                <table class="table table-striped">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td> 訂單編號: </td>
+                            <td> {{$res.OrderNo}} </td>
+                        </tr>
+                        <tr>
+                            <td> 價格: </td>
+                            <td> {{$res.Amount}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{{end}}

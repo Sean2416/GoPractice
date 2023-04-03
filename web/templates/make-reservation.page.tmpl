@@ -8,7 +8,7 @@
 
                 {{$res := index .Data "reservation"}}
 
-                <form method="post" action="" class="" novalidate>
+                <form method="post" action="/payment-redirect" class="" novalidate>
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
                     <div class="form-group mt-3">
@@ -52,7 +52,7 @@
                     </div>
 
                     <hr>
-                    <input type="submit" class="btn btn-primary" value="Make Reservation">
+                    <input type="submit" class="btn btn-primary" value="結帳">
                 </form>
 
 

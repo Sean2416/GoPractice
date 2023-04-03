@@ -7,3 +7,14 @@ type Reservation struct {
 	Email     string
 	Phone     string
 }
+
+// Reservation holds reservation data
+type Payment struct {
+	OrderNo      string
+	Desc         string
+	Amount       float32
+	Currency     string
+	Email        string
+	Phone        string
+	CustomerName string
+}

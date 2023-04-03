@@ -5,10 +5,13 @@ import (
 	"WEB/internal/forms"
 	"WEB/internal/models"
 	"WEB/internal/render"
+	"WEB/internal/services"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 // Repo the repository used by the handlers
@@ -151,6 +154,10 @@ func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
+func (m *Repository) Redir(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "payment-redirect.page.tmpl", &models.TemplateData{})
+}
+
 // Contact renders the contact page
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
@@ -170,4 +177,66 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TemplateData{
 		Data: data,
 	})
+}
+
+func (m *Repository) RedirectToPayment(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	currentTime := time.Now()
+	formattedTime := currentTime.Format("20060102150405")
+
+	reservation := models.Payment{
+		OrderNo:      formattedTime,
+		Desc:         "IPhone 14 pro 512GB",
+		CustomerName: fmt.Sprint(r.Form.Get("first_name"), "-", r.Form.Get("last_name")),
+		Email:        r.Form.Get("email"),
+		Phone:        r.Form.Get("phone"),
+		Amount:       1000,
+		Currency:     "TWD",
+	}
+
+	formHtml := services.ECPay(reservation)
+
+	//formHtml = "<script  languge='javascript'>location.assign('" + "http://yahoo.com.tw" + "')</script>"
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprint(w, formHtml)
+
+}
+
+// Contact renders the contact page
+func (m *Repository) PaymentSuccess(w http.ResponseWriter, r *http.Request) {
+	orderNo := r.PostFormValue("MerchantTradeNo")
+	paymentAmount, err := strconv.ParseFloat(r.PostFormValue("TradeAmt"), 32)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["payment"] = models.Payment{
+		OrderNo: orderNo,
+		Amount:  float32(paymentAmount),
+	}
+
+	render.RenderTemplate(w, r, "pay-success.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
+
+// Contact renders the contact page
+func (m *Repository) ECPayCallback(w http.ResponseWriter, r *http.Request) {
+	orderNo := r.PostFormValue("MerchantTradeNo")
+	fmt.Println("OrderNo:", orderNo)
+
+	for key, values := range r.PostForm {
+		fmt.Println("Key:", key)
+		for _, value := range values {
+			fmt.Println("Value:", value)
+		}
+	}
 }
