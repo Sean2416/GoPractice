@@ -8,20 +8,16 @@ import (
 
 func main() {
 	c := &config.AppConfig{
-		AppID:         "Payment.PaymentExchange",
+		AppID:         "Chinese.Dictionary",
 		Cluster:       "stg",
-		IP:            "http://apollo.tutorabc.com/meta/prd",
-		NamespaceName: "OMS.Share",
+		IP:            "http://apollo.tutorabc.com/meta/stg",
+		NamespaceName: "application",
 	}
 
 	client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
 		return c, nil
 	})
-	fmt.Println("初始化Apollo配置成功")
+	namespaceConfig := client.GetConfigAndInit("application")
 
-	//Use your apollo key to test
-	cache := client.GetConfigCache(c.NamespaceName)
-	value, _ := cache.Get("OmsAPI")
-	fmt.Println(value)
-
+	fmt.Println(namespaceConfig)
 }
