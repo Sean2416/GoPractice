@@ -8,17 +8,17 @@
 
                 {{$res := index .Data "reservation"}}
 
-                <form method="post" action="/payment-redirect" class="" novalidate>
+                <form method="post" action="http://localhost:8000/v1/payment" class="" novalidate>
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
                     <div class="form-group mt-3">
-                        <label for="first_name">First Name:</label>
-                        {{with .Form.Errors.Get "first_name"}}
+                        <label for="order_id">First Name:</label>
+                        {{with .Form.Errors.Get "order_id"}}
                             <label class="text-danger">{{.}}</label>
                         {{end}}
-                        <input class="form-control {{with .Form.Errors.Get "first_name"}} is-invalid {{end}}"
-                               id="first_name" autocomplete="off" type='text'
-                               name='first_name' value="{{$res.FirstName}}" required>
+                        <input class="form-control {{with .Form.Errors.Get "order_id"}} is-invalid {{end}}"
+                               id="order_id" autocomplete="off" type='text'
+                               name='order_id' value="{{$res.FirstName}}" required>
                     </div>
 
                     <div class="form-group">
